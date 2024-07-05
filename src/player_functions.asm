@@ -95,10 +95,10 @@ section .data
 player:
   .relX dq 400
   .relY dq 225
-  .minRelX dq 150
-  .minRelY dq 125
-  .maxRelX dq 650
-  .maxRelY dq 325
+  .minRelX dq 100
+  .minRelY dq 80
+  .maxRelX dq 580
+  .maxRelY dq 260
   .x dq 0
   .y dq 0
   .speed dq 4

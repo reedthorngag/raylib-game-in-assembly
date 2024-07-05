@@ -152,8 +152,8 @@ drawPos:
   xor rax, rax
   call TextFormat
 
-  mov r8, 0xff000000
-  mov rcx, 15
+  mov r8, 0xffa0a0a0
+  mov rcx, 20
   mov rsi, 10
   mov rdx, 40
   mov rdi, rax
