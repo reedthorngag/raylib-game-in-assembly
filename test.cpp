@@ -16,6 +16,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <stdio.h>
+#include <OpenSimplexNoise.h>
 
 #define G 400
 #define PLAYER_JUMP_SPD 350.0f
@@ -54,7 +55,12 @@ int main(void)
     const int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera");
-    printf("hello");
+    
+    double out = 1.0f;
+    OpenSimplexNoise::Noise o1(100);
+    out = o1.eval(5,8);
+
+    printf("hello %lf",out);
 
     Player player = { 0 };
     player.position = (Vector2){ 400, 280 };
