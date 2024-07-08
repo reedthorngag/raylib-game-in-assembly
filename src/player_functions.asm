@@ -1,3 +1,4 @@
+extern DrawRectangle
 
 global getX
 global getY
@@ -8,6 +9,7 @@ global stepPosX
 global stepNegX
 global stepPosY
 global stepNegY
+global drawPlayer
 
 section .text
 
@@ -90,17 +92,30 @@ stepNegY:
     ret
 
 
+drawPlayer:
+    mov rdi, [player.relX]
+    mov rsi, [player.relY]
+    mov rdx, [player.width]
+    mov rcx, [player.height]
+    mov r8, 0xFF0000FF
+    call DrawRectangle
+
+    ret
+
+
 section .data
 
 player:
-  .relX dq 400
-  .relY dq 225
+  .relX dq 395
+  .relY dq 220
   .minRelX dq 100
   .minRelY dq 80
-  .maxRelX dq 580
-  .maxRelY dq 260
+  .maxRelX dq 690
+  .maxRelY dq 360
   .x dq 0
   .y dq 0
   .speed dq 4
+  .width dq 20
+  .height dq 20
 
 
