@@ -135,7 +135,7 @@ render:
 	call drawPos
 
 	call EndDrawing
-	;jmp game_loop
+	jmp game_loop
 
 exit:
 	call	CloseWindow

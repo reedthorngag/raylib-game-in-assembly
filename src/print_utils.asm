@@ -3,6 +3,7 @@
 global printStr
 global printLine
 global printHex
+global printChar
 
 
 section .text
@@ -109,11 +110,17 @@ printHex:
     push rbx
     push rcx
     push rdx
-    push rdi
     push rsi
+    push rdi
     push r8
     push r9
     push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
+
     push rax
 
     mov rsi, hexPrefix
@@ -153,12 +160,18 @@ printHex:
     mov al, ' '
     call printChar
 
+    pop rax
+
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
     pop r10
     pop r9
     pop r8
-    pop rax
-    pop rsi
     pop rdi
+    pop rsi
     pop rdx
     pop rcx
     pop rbx
@@ -210,20 +223,7 @@ printChar:
 ; string pointer in rsi
 ; returns length in rax
 strLen:
-    push rax
-    push rbx
-    push rcx
-    push rdx
     push rsi
-    push rdi
-    push r8
-    push r9
-    push r10
-    push r11
-    push r12
-    push r13
-    push r14
-    push r15
 
     xor rax, rax
 .loop:
@@ -234,20 +234,7 @@ strLen:
     jmp .loop
 
 .return:
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop r11
-    pop r10
-    pop r9
-    pop r8
-    pop rdi
     pop rsi
-    pop rdx
-    pop rcx
-    pop rbx
-    pop rax
     ret
 
 

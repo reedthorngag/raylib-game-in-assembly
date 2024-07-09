@@ -2,6 +2,10 @@ extern DrawRectangle
 
 extern printStr
 extern printHex
+extern printChar
+
+extern getX
+extern getY
 
 global generateChunks
 global drawChunks
@@ -18,17 +22,19 @@ generateChunks:
 
     mov rcx, [chunks.width]
 .iterateX:
+    dec cl
 
     mov rdx, [chunks.height]
 .iterateY:
+    dec dl
     call generateChunk
     sub rbx, 0x200
-    dec dl
-    jnz .iterateY
+    cmp dl, 0
+    jne .iterateY
 
     sub rax, 0x200
     add rbx, 0x600
-    dec cl
+    cmp cl, 0
     jnz .iterateX
 
     ret
@@ -51,7 +57,12 @@ generateChunk:
 
     mov rsi, rax
     pop rax
+    call printHex
     mov [rsi], rax
+    mov rax, rbx
+    call printHex
+    mov al, 0xa
+    call printChar
     mov [rsi+8], rbx
     add rsi, 0x10
 
@@ -86,15 +97,17 @@ drawChunks:
     
     mov rcx, [chunks.width]
 .iterateX:
+    dec rcx
 
     mov rdx, [chunks.height]
 .iterateY:
+    dec rdx
     call drawChunk
-    dec dl
-    jnz .iterateY
+    cmp rdx, 0
+    jne .iterateY
 
-    dec cl
-    jnz .iterateX
+    cmp rcx, 0
+    jne .iterateX
 
     pop rbx
     pop rcx
@@ -122,15 +135,17 @@ drawChunk:
 
     mov rcx, [chunk.tilesX]
 .iterateTilesX:
+    dec rcx
 
     mov rdx, [chunk.tilesY]
 .iterateTilesY:
+    dec rdx
     call drawTile
-    dec dl
-    jnz .iterateTilesY
+    cmp rdx, 0
+    jne .iterateTilesY
 
-    dec cl
-    jnz .iterateTilesX
+    cmp rcx, 0
+    jne .iterateTilesX
 
 .return:
 
@@ -152,29 +167,23 @@ drawTile:
     mov r10, rcx ; tile x
     mov r11, rdx ; tile y
 
-    mov rax, rsi
-    call printHex
-
-    mov rax, r11
-    call printHex
-
-    ; calculate true y pos
-    mov rax, r11
-    mul qword [tile.height]
-    call printHex
-    add rax, r9
-
-    mov rax, r11
-    call printHex
-
-    mov r12, rax ; true tile y pos
-    
-    ; calculate true x pos
+     ; calculate true x pos
     mov rax, r10
     mul qword [tile.width]
     add rax, r8
 
-    mov r13, rax ; true tile x pos
+    mov r12, rax ; true tile x pos
+    call getX
+    sub r12, rax
+
+    ; calculate true y pos
+    mov rax, r11
+    mul qword [tile.height]
+    add rax, r9
+
+    mov r13, rax ; true tile y pos
+    call getY
+    sub r13, rax
     
     ; calculate tile position in chunk tile array
     mov rax, r11
@@ -182,16 +191,9 @@ drawTile:
     add rax, r10
     add rsi, rax
 
-
     ; find tile type and then get color based on tile type
     xor rax, rax
-    mov rax, rsi
-    call printHex
-    mov rax, chunks
-    call printHex
     mov dl, [rsi]
-    mov rsi, text
-    call printStr
     cmp dl, 0
     cmove rax, [num_8]
     mov rsi, tileTypes
@@ -199,22 +201,15 @@ drawTile:
     mov rdi, [rsi]
 
     xor r8, r8
-    mov r8d, dword [rdi]
+    mov r8d, [rdi]
 
-    ; mov rsi, text
-    ; call printStr
-
-    ; mov rax, r12
-    ; call printHex
-
-    ; mov rax, r13
-    ; call printHex
-
-    mov rdi, [r12]
-    mov rsi, [r13]
+    mov rdi, r12
+    mov rsi, r13
     mov rdx, [tile.width]
     mov rcx, [tile.height]
     call DrawRectangle
+
+
 
 .return:
 
@@ -229,7 +224,8 @@ drawTile:
 
 section .data
 
-text db 0xa,"Pos: ",0
+text:
+    .chunk db 0xa,"Drawing chunk at: ",0
 
 chunks:
     times (8 + 8 + (16*16)) * 9 db 0
