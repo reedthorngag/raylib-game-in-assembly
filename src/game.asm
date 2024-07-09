@@ -25,11 +25,14 @@ extern stepPosY
 extern stepNegY
 extern drawPlayer
 
+extern printStr
+extern printHex
+
 section .text
 
 global _start
 _start:
-	push qword rbp
+	push rbp
 	mov rbp, rsp
 	sub rsp, 24
 
@@ -53,7 +56,7 @@ _start:
 
 game_loop:
 
-	call	WindowShouldClose
+	call WindowShouldClose
 	cmp rax, 1
 	je exit
 
@@ -96,11 +99,6 @@ key_checks:
 .done:
 
 render:
-	mov rax, 1
-	mov rdi, 1
-	mov rsi, title
-	mov rdx, 10
-	syscall
 	call BeginDrawing
 
 	push qword [rbp - 8]
@@ -131,10 +129,19 @@ render:
 	call drawPos
 
 	call EndDrawing
-	jmp game_loop
+	;jmp game_loop
+
+	mov rsi, title
+	call printStr
+	mov rax, 0x0f0f0f
+	call printHex
+	call printStr
 
 exit:
 	call	CloseWindow
+
+	add rsp, 24
+	pop rbp
 
 	; exit(0)
 	mov rax, 0x3c

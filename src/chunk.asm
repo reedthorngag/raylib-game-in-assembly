@@ -3,6 +3,8 @@ extern DrawRectangle
 global generateChunks
 global drawChunks
 
+section .text
+
 ; x in rax
 ; y in rbx
 generateChunks:
@@ -153,7 +155,7 @@ drawTile:
     xor rax, rax
     mov dl, [rsi]
     cmp dl, 0
-    cmove rax, [.data]
+    cmove rax, [data]
     mov rsi, tileTypes
     add rsi, rax
     mov rdi, [rsi]
@@ -176,12 +178,15 @@ drawTile:
 
     ret
 
-.data dq 8
-
+section .data
 chunks:
     times (8 + 8 + (16*16)) * 9 db 0
     .width dq 3
     .height dq 3
+
+section .data
+
+data dq 8
 
 chunk:
     .xOffset dq 0
