@@ -25,6 +25,9 @@ extern stepPosY
 extern stepNegY
 extern drawPlayer
 
+extern generateChunks
+extern drawChunks
+
 extern printStr
 extern printHex
 
@@ -54,6 +57,8 @@ _start:
 	call SetExitKey
 	; fall through to the game loop
 
+	call generateChunks
+	
 game_loop:
 
 	call WindowShouldClose
@@ -117,6 +122,7 @@ render:
 	mov rdi, 0xFFFF0000
 	call ClearBackground
 
+	call drawChunks
 
 	call drawPlayer
 
@@ -130,12 +136,6 @@ render:
 
 	call EndDrawing
 	;jmp game_loop
-
-	mov rsi, title
-	call printStr
-	mov rax, 0x0f0f0f
-	call printHex
-	call printStr
 
 exit:
 	call	CloseWindow

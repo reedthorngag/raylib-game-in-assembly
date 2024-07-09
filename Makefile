@@ -41,7 +41,13 @@ build_deps:
 	done
 
 test: test.cpp
-	gcc $(CFLAGS) -I include/ $(LIB_PATHS) -S test.cpp $(LIBS) -o test.asm
+	gcc $(CFLAGS) -I include/ $(LIB_PATHS) -S test.cpp $(LIBS) -o test_out.asm
+
+test_asm: test.asm
+	nasm -f elf64 -g test.asm -o test.o
+	gcc $(CFLAGS) $(LIB_PATHS) test.o $(LIBS) -o bin/test
+	rm test.o
+	./bin/test
 
 clean:
 	rm -f bin/*.o
