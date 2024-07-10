@@ -1,5 +1,8 @@
 extern DrawRectangle
 
+extern _ZN16OpenSimplexNoise5NoiseC2El
+extern _ZNK16OpenSimplexNoise5Noise4evalEdd
+
 extern printStr
 extern printHex
 extern printChar
@@ -15,6 +18,15 @@ section .text
 ; x in rax
 ; y in rbx
 generateChunks:
+
+    mov rsi, 0x100
+    mov rdi, noise_ptr
+    call _ZN16OpenSimplexNoise5NoiseC2El
+
+    call getY
+    mov rbx, rax
+    call getX
+
     and rax, 0xfffffffffffffe00
     and rbx, 0xfffffffffffffe00
     add rax, 0x200
@@ -50,32 +62,37 @@ generateChunk:
     push rsi
 
     push rax
+
     mov rax, rdx
-    mul qword [chunks.width]
-    add rax, rcx
+    mul qword [chunks.stepSizeY]
+    mov r8, rax
+
+    mov rax, rcx
+    mul qword [chunks.stepSizeX]
+
+    add rax, r8
     add rax, chunks
 
     mov rsi, rax
+
     pop rax
-    call printHex
     mov [rsi], rax
-    mov rax, rbx
-    call printHex
-    mov al, 0xa
-    call printChar
     mov [rsi+8], rbx
     add rsi, 0x10
 
-    mov al, 1
-    mov rcx, 0x100
-.rep:
-    dec al
-    mov [rsi], al
-    cmovz ax, word [.data]
-    inc rsi
-
+    mov rcx, [chunk.tilesX]
+.iterateTilesX:
     dec rcx
-    jnz .rep
+
+    mov rdx, [chunk.tilesY]
+.iterateTilesY:
+    dec rdx
+    call genTile
+    cmp rdx, 0
+    jne .iterateTilesY
+
+    cmp rcx, 0
+    jne .iterateTilesX
 
     pop rsi
     pop rdx
@@ -85,7 +102,58 @@ generateChunk:
 
     ret
 
-.data dw 2
+genTile:
+    push rcx ; x
+    push rdx ; y
+    push rsi ; chunk tile array pointer
+
+    push rbp
+    mov rbp, rsp
+    sub rsp, 0x10
+
+    mov [rbp-8], rcx
+    mov [rbp-0x10], rdx
+
+    ; calculate tile position in chunk tile array
+    mov rax, rdx
+    mul qword [chunk.tilesX]
+    add rax, rcx
+    add rsi, rax
+
+    push rsi
+
+    pxor xmm0,xmm0
+    pxor xmm1,xmm1
+    cvtsi2sd xmm0, [rbp-8]
+    cvtsi2sd xmm1, [rbp-0x10]
+    mov rdi, noise_ptr
+    call _ZNK16OpenSimplexNoise5Noise4evalEdd ; result in xmm0
+
+    pop rsi
+    mov byte [rsi], 0
+
+    mov qword [rbp-8], __float32__(0.5)
+    movsd xmm1, [rbp-8]
+    movsd [rbp-8], xmm0
+    ;pxor xmm1, xmm1
+    ;comisd xmm0, xmm1
+
+    ;setge byte [rsi]
+
+    mov rax, [rbp-8]
+    call printHex
+
+    shr rax, 63
+    mov [rsi], al
+
+    add rsp, 0x10
+    pop rbp
+
+    pop rsi
+    pop rdx
+    pop rcx
+
+    ret
 
 drawChunks:
     push rax
@@ -123,8 +191,13 @@ drawChunk:
     push rdx
 
     mov rax, rdx
-    mul qword [chunks.width]
-    add rax, rcx
+    mul qword [chunks.stepSizeY]
+    mov r8, rax
+
+    mov rax, rcx
+    mul qword [chunks.stepSizeX]
+
+    add rax, r8
     add rax, chunks
 
     mov rsi, rax
@@ -224,13 +297,18 @@ drawTile:
 
 section .data
 
+noise_ptr: dq 0
+
 text:
     .chunk db 0xa,"Drawing chunk at: ",0
 
 chunks:
     times (8 + 8 + (16*16)) * 9 db 0
+    .thing dq $ - chunks
     .width dq 3
     .height dq 3
+    .stepSizeX dq (8+8+(16*16))
+    .stepSizeY dq 0x330
 
 num_8 dq 8
 

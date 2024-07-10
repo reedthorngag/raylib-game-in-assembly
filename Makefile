@@ -14,6 +14,10 @@ DIRS = src/
 SRC = $(foreach dir,$(DIRS), $(wildcard $(dir)*.asm))
 OBJ_FILES = $(foreach file,$(foreach file,$(SRC), $(notdir $(file))),bin/$(file:.asm=.o))
 
+DEPS_DIRS = include/
+DEPS_SRC = $(foreach dir,$(DEPS_DIRS), $(wildcard $(dir)*.cpp))
+DEPS_OBJ_FILES = $(foreach file,$(foreach file,$(DEPS_SRC), $(notdir $(file))),bin/$(file:.cpp=.o))
+
 build: $(SRC)
 	make clean
 	make build_deps
@@ -26,11 +30,7 @@ build: $(SRC)
 		nasm -f elf64 -g $$file -o bin/$${name}.o; \
 	done
 
-	gcc $(CFLAGS) $(LIB_PATHS) $(OBJ_FILES) $(LIBS) -o bin/game
-
-
-DEPS_DIRS = include/
-DEPS_SRC = $(foreach dir,$(DEPS_DIRS), $(wildcard $(dir)*.cpp))
+	gcc $(CFLAGS) $(LIB_PATHS) $(OBJ_FILES) $(DEPS_OBJ_FILES) $(LIBS) -o bin/game
 
 build_deps:
 	echo $(DEPS_SRC)

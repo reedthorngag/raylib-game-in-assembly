@@ -184,8 +184,11 @@ main:
 	movl	$100, %esi
 	movq	%rax, %rdi
 	call	_ZN16OpenSimplexNoise5NoiseC1El@PLT
+	movl	$1, -44(%rbp)
+	pxor	%xmm2, %xmm2
+	cvtsi2sdl	-44(%rbp), %xmm2
+	movq	%xmm2, %rdx
 	movsd	.LC2(%rip), %xmm0
-	movq	.LC3(%rip), %rdx
 	leaq	-1520(%rbp), %rax
 	movapd	%xmm0, %xmm1
 	movq	%rdx, %xmm0
@@ -193,6 +196,10 @@ main:
 	call	_ZNK16OpenSimplexNoise5Noise4evalEdd@PLT
 	movq	%xmm0, %rax
 	movq	%rax, -40(%rbp)
+	movsd	-40(%rbp), %xmm0
+	comisd	.LC3(%rip), %xmm0
+	seta	%al
+	movb	%al, -45(%rbp)
 	movq	-40(%rbp), %rax
 	movq	%rax, %xmm0
 	leaq	.LC4(%rip), %rax
@@ -273,7 +280,7 @@ main:
 	movb	$-126, -1547(%rbp)
 	movb	$-126, -1546(%rbp)
 	movb	$-1, -1545(%rbp)
-	movl	$5, -44(%rbp)
+	movl	$5, -52(%rbp)
 	movq	$0, -1696(%rbp)
 	movq	$0, -1688(%rbp)
 	movq	$0, -1680(%rbp)
@@ -298,7 +305,7 @@ main:
 	leaq	_Z28UpdateCameraPlayerBoundsPushP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
 	movq	%rax, -1712(%rbp)
 	movl	$0, -20(%rbp)
-	movl	$5, -48(%rbp)
+	movl	$5, -56(%rbp)
 	leaq	.LC17(%rip), %rax
 	movq	%rax, -1792(%rbp)
 	leaq	.LC18(%rip), %rax
@@ -315,9 +322,9 @@ main:
 .L19:
 	call	GetFrameTime@PLT
 	movd	%xmm0, %eax
-	movl	%eax, -52(%rbp)
-	movl	-52(%rbp), %esi
-	movl	-44(%rbp), %edx
+	movl	%eax, -60(%rbp)
+	movl	-60(%rbp), %esi
+	movl	-52(%rbp), %edx
 	leaq	-1664(%rbp), %rcx
 	leaq	-1536(%rbp), %rax
 	movd	%esi, %xmm0
@@ -362,14 +369,14 @@ main:
 	movl	-20(%rbp), %eax
 	addl	$1, %eax
 	cltd
-	idivl	-48(%rbp)
+	idivl	-56(%rbp)
 	movl	%edx, -20(%rbp)
 .L16:
 	movl	-20(%rbp), %eax
 	cltq
 	movq	-1744(%rbp,%rax,8), %r11
-	movl	-52(%rbp), %eax
-	movl	-44(%rbp), %edx
+	movl	-60(%rbp), %eax
+	movl	-52(%rbp), %edx
 	leaq	-1664(%rbp), %r10
 	leaq	-1536(%rbp), %rsi
 	leaq	-1696(%rbp), %rdi
@@ -391,8 +398,8 @@ main:
 	movl	%eax, -1848(%rbp)
 	movl	%eax, %edi
 	call	ClearBackground@PLT
-	movl	$100, -56(%rbp)
-	movl	$120, -60(%rbp)
+	movl	$100, -64(%rbp)
+	movl	$120, -68(%rbp)
 	movl	-1812(%rbp), %ecx
 	movb	$-26, %cl
 	movl	$41, %eax
@@ -402,8 +409,8 @@ main:
 	orl	$3604480, %eax
 	orl	$-16777216, %eax
 	movl	%eax, -1812(%rbp)
-	movl	-60(%rbp), %edx
-	movl	-56(%rbp), %eax
+	movl	-68(%rbp), %edx
+	movl	-64(%rbp), %eax
 	movl	%eax, %esi
 	leaq	.LC25(%rip), %rax
 	movq	%rax, %rdi
@@ -451,7 +458,7 @@ main:
 	addl	$1, -24(%rbp)
 .L17:
 	movl	-24(%rbp), %eax
-	cmpl	-44(%rbp), %eax
+	cmpl	-52(%rbp), %eax
 	jl	.L18
 	movq	$0, -1808(%rbp)
 	movq	$0, -1800(%rbp)
@@ -1508,12 +1515,12 @@ _Z28UpdateCameraPlayerBoundsPushP8Camera2DP6PlayerP7EnvItemifii:
 	.long	1072693248
 	.align 8
 .LC2:
-	.long	0
-	.long	1075838976
+	.long	858993459
+	.long	1075852083
 	.align 8
 .LC3:
 	.long	0
-	.long	1075052544
+	.long	1071644672
 	.align 4
 .LC5:
 	.long	1137180672

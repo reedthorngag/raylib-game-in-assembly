@@ -58,7 +58,10 @@ int main(void)
     
     double out = 1.0f;
     OpenSimplexNoise::Noise o1(100);
-    out = o1.eval(5,8);
+    int a = 1;
+    out = o1.eval(a,8.1);
+
+    bool b = out > 0.5;
 
     printf("hello %lf",out);
 

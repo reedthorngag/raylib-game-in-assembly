@@ -157,6 +157,13 @@ printHex:
     shr rbx, 4
     jnz .loop
 
+    cmp r9, 0
+    je .skipZero
+
+    mov al, '0'
+    call printChar
+
+.skipZero:
     mov al, ' '
     call printChar
 
