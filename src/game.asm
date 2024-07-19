@@ -24,6 +24,7 @@ extern stepNegX
 extern stepPosY
 extern stepNegY
 extern drawPlayer
+extern changedChunk
 
 extern generateChunks
 extern drawChunks
@@ -103,6 +104,15 @@ key_checks:
 
 .done:
 
+	call changedChunk
+	jnc render
+	; fall through to generateChunks
+
+regenChunks:
+	mov rsi, regeneratingChunksStr
+	call printStr
+	call generateChunks
+
 render:
 	call BeginDrawing
 
@@ -173,6 +183,7 @@ section .data
 
 title db 'Hello world!', 0
 posString db 'Pos: %i, %i',0
+regeneratingChunksStr db 'Regenerating chunks!',0
 
 screen:
   .width dq 800

@@ -34,19 +34,19 @@ generateChunks:
 
     mov rcx, [chunks.width]
 .iterateX:
-    dec cl
+    dec rcx
 
     mov rdx, [chunks.height]
 .iterateY:
-    dec dl
+    dec rdx
     call generateChunk
     sub rbx, 0x200
-    cmp dl, 0
+    cmp rdx, 0
     jne .iterateY
 
     sub rax, 0x200
     add rbx, 0x600
-    cmp cl, 0
+    cmp rcx, 0
     jnz .iterateX
 
     ret
@@ -78,15 +78,15 @@ generateChunk:
     pop rax
     mov [rsi], rax
     mov [rsi+8], rbx
-    add rsi, 0x10
+    add rsi, 16
 
-    mov rcx, [chunk.tilesX]
+    mov rcx, [chunk.width]
 .iterateTilesX:
-    dec rcx
+    sub rcx, [tile.width]
 
-    mov rdx, [chunk.tilesY]
+    mov rdx, [chunk.height]
 .iterateTilesY:
-    dec rdx
+    sub rdx, [tile.height]
     call genTile
     cmp rdx, 0
     jne .iterateTilesY
@@ -103,6 +103,8 @@ generateChunk:
     ret
 
 genTile:
+    push rax ; chunk x
+    push rbx ; chunk y
     push rcx ; x
     push rdx ; y
     push rsi ; chunk tile array pointer
@@ -111,11 +113,17 @@ genTile:
     mov rbp, rsp
     sub rsp, 32
 
-    mov [rbp-8], rcx
-    mov [rbp-16], rdx
-    mov qword [rbp-24], __float32__(0.3)
+    add rax, rcx
+    add rbx, rdx
+
+    mov [rbp-8], rax
+    mov [rbp-16], rbx
+    mov qword [rbp-24], __float32__(0.001)
 
     ; calculate tile position in chunk tile array
+    shr rdx, 5
+    shr rcx, 5
+
     mov rax, rdx
     mul qword [chunk.tilesX]
     add rax, rcx
@@ -157,6 +165,8 @@ genTile:
     pop rsi
     pop rdx
     pop rcx
+    pop rbx
+    pop rax
 
     ret
 
@@ -308,10 +318,10 @@ text:
     .chunk db 0xa,"Drawing chunk at: ",0
 
 chunks:
-    times (8 + 8 + (16*16)) * 16 db 0
+    times (8 + 8 + (16*16)) * 9 db 0
     .thing dq $ - chunks
-    .width dq 4
-    .height dq 4
+    .width dq 3
+    .height dq 3
     .stepSizeX dq (8+8+(16*16))
     .stepSizeY dq 0x330
 
@@ -324,7 +334,8 @@ chunk:
     .totalSize dq $ - chunk
     .tilesX dq 16
     .tilesY dq 16
-    .width dq 16 * 32
+    .width dq 32 * 16
+    .height dq 32 * 16
 
 tile:
     .type db 0

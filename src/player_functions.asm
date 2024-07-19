@@ -1,5 +1,8 @@
 extern DrawRectangle
 
+extern printHex
+extern printChar
+
 global getX
 global getY
 global getRelX
@@ -10,6 +13,7 @@ global stepNegX
 global stepPosY
 global stepNegY
 global drawPlayer
+global changedChunk
 
 section .text
 
@@ -102,6 +106,31 @@ drawPlayer:
 
     ret
 
+changedChunk:
+    mov rax, [player.x]
+    shr rax, 9
+    cmp rax, [player.lastChunkX]
+    jne .true
+
+    mov rbx, [player.y]
+    shr rbx, 9
+    cmp rbx, [player.lastChunkY]
+    je .false
+
+.true:
+    mov [player.lastChunkX], rax
+    mov [player.lastChunkY], rbx
+    call printHex
+    mov rax, rbx
+    call printHex
+    mov rax, 0
+    dec rax
+    ret
+
+.false:
+    xor rax, rax
+    ret
+
 
 section .data
 
@@ -114,6 +143,8 @@ player:
   .maxRelY dq 360
   .x dq 0
   .y dq 0
+  .lastChunkX dq 0
+  .lastChunkY dq 0
   .speed dq 8
   .width dq 20
   .height dq 20
