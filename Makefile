@@ -10,7 +10,7 @@ run:
 LIB_PATHS = -L/usr/local/lib/
 LIBS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 CFLAGS = -no-pie -nostdlib
-DIRS = src/
+DIRS = src/ src/utils/
 SRC = $(foreach dir,$(DIRS), $(wildcard $(dir)*.asm))
 OBJ_FILES = $(foreach file,$(foreach file,$(SRC), $(notdir $(file))),bin/$(file:.asm=.o))
 
@@ -43,9 +43,25 @@ build_deps:
 test: test.cpp
 	gcc $(CFLAGS) -I include/ $(LIB_PATHS) -S test.cpp $(LIBS) -o test_out.asm
 
+
+TEST_DEPS_DIRS = src/utils/
+TEST_DEPS_SRC = $(foreach dir,$(TEST_DEPS_DIRS), $(wildcard $(dir)*.asm))
+TEST_DEPS_OBJ_FILES = $(foreach file,$(foreach file,$(TEST_DEPS_SRC), $(notdir $(file))),bin/$(file:.asm=.o))
+
+build_test_deps:
+	echo $(TEST_DEPS_SRC)
+	for file in $(TEST_DEPS_SRC); do\
+		name=$${file%.*}; \
+		name=$${name##*/}; \
+		nasm -f elf64 -g $$file -o bin/$${name}.o; \
+	done
+
 test_asm: test.asm
+	make clean
+	make build_test_deps
+
 	nasm -f elf64 -g test.asm -o test.o
-	gcc $(CFLAGS) $(LIB_PATHS) test.o $(LIBS) -o bin/test
+	gcc $(CFLAGS) $(LIB_PATHS) test.o $(TEST_DEPS_OBJ_FILES) $(LIBS) -o bin/test
 	rm test.o
 	./bin/test
 

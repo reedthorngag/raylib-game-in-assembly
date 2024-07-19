@@ -114,7 +114,7 @@ player:
   .maxRelY dq 360
   .x dq 0
   .y dq 0
-  .speed dq 4
+  .speed dq 8
   .width dq 20
   .height dq 20
 

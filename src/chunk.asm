@@ -109,10 +109,11 @@ genTile:
 
     push rbp
     mov rbp, rsp
-    sub rsp, 0x10
+    sub rsp, 32
 
     mov [rbp-8], rcx
-    mov [rbp-0x10], rdx
+    mov [rbp-16], rdx
+    mov qword [rbp-24], __float32__(0.3)
 
     ; calculate tile position in chunk tile array
     mov rax, rdx
@@ -125,28 +126,32 @@ genTile:
     pxor xmm0,xmm0
     pxor xmm1,xmm1
     cvtsi2sd xmm0, [rbp-8]
-    cvtsi2sd xmm1, [rbp-0x10]
+    cvtsi2sd xmm1, [rbp-16]
+
+    pxor xmm2, xmm2
+    cvtss2sd xmm2, [rbp-24]
+
+    mulsd xmm0, xmm2
+    mulsd xmm1, xmm2
+
     mov rdi, noise_ptr
     call _ZNK16OpenSimplexNoise5Noise4evalEdd ; result in xmm0
 
     pop rsi
     mov byte [rsi], 0
 
-    mov qword [rbp-8], __float32__(0.5)
-    movsd xmm1, [rbp-8]
+    mov qword [rbp-8], __float32__(0.2)
+    pxor xmm1,xmm1
+    cvtss2sd xmm1, [rbp-8]
+    subsd xmm0, xmm1
     movsd [rbp-8], xmm0
-    ;pxor xmm1, xmm1
-    ;comisd xmm0, xmm1
-
-    ;setge byte [rsi]
 
     mov rax, [rbp-8]
-    call printHex
 
     shr rax, 63
     mov [rsi], al
 
-    add rsp, 0x10
+    add rsp, 32
     pop rbp
 
     pop rsi
@@ -303,10 +308,10 @@ text:
     .chunk db 0xa,"Drawing chunk at: ",0
 
 chunks:
-    times (8 + 8 + (16*16)) * 9 db 0
+    times (8 + 8 + (16*16)) * 16 db 0
     .thing dq $ - chunks
-    .width dq 3
-    .height dq 3
+    .width dq 4
+    .height dq 4
     .stepSizeX dq (8+8+(16*16))
     .stepSizeY dq 0x330
 
@@ -314,9 +319,9 @@ num_8 dq 8
 
 chunk:
     .xOffset dq 0
-    .yOffset dq $ - chunks
+    .yOffset dq $ - chunk
     .tiles: times (16*16) db 0
-    .totalSize dq $ - chunks
+    .totalSize dq $ - chunk
     .tilesX dq 16
     .tilesY dq 16
     .width dq 16 * 32
