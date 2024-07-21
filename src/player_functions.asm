@@ -3,10 +3,10 @@ extern DrawRectangle
 extern printHex
 extern printChar
 
-global getX
-global getY
-global getRelX
-global getRelY
+global getPlayerX
+global getPlayerY
+global getScreenRelX
+global getScreenRelY
 
 global stepPosX
 global stepNegX
@@ -17,19 +17,19 @@ global changedChunk
 
 section .text
 
-getX:
+getPlayerX:
     mov rax, [player.x]
     ret
 
-getY:
+getPlayerY:
     mov rax, [player.y]
     ret
 
-getRelX:
+getScreenRelX:
     mov rax, [player.relX]
     ret
 
-getRelY:
+getScreenRelY:
     mov rax, [player.relY]
     ret
 
@@ -109,11 +109,12 @@ drawPlayer:
 changedChunk:
     mov rax, [player.x]
     shr rax, 9
+    mov rbx, [player.y]
+    shr rbx, 9
+
     cmp rax, [player.lastChunkX]
     jne .true
 
-    mov rbx, [player.y]
-    shr rbx, 9
     cmp rbx, [player.lastChunkY]
     je .false
 
@@ -123,8 +124,9 @@ changedChunk:
     call printHex
     mov rax, rbx
     call printHex
-    mov rax, 0
-    dec rax
+    mov al, 0x0a
+    call printChar
+    mov rax, 1
     ret
 
 .false:
@@ -141,8 +143,8 @@ player:
   .minRelY dq 80
   .maxRelX dq 690
   .maxRelY dq 360
-  .x dq 0
-  .y dq 0
+  .x dq 2000
+  .y dq 136
   .lastChunkX dq 0
   .lastChunkY dq 0
   .speed dq 8

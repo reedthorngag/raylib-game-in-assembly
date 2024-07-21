@@ -15,10 +15,10 @@ extern IsKeyDown
 extern TextFormat
 extern DrawText
 
-extern getX
-extern getY
-extern getRelX
-extern getRelY
+extern getPlayerX
+extern getPlayerY
+extern getScreenRelX
+extern getScreenRelY
 extern stepPosX
 extern stepNegX
 extern stepPosY
@@ -26,8 +26,10 @@ extern stepNegY
 extern drawPlayer
 extern changedChunk
 
+extern chunksInit
 extern generateChunks
 extern drawChunks
+extern drawChunkBorders
 
 extern printStr
 extern printHex
@@ -58,6 +60,7 @@ _start:
 	call SetExitKey
 	; fall through to the game loop
 
+	call chunksInit
 	call generateChunks
 	
 game_loop:
@@ -105,7 +108,8 @@ key_checks:
 .done:
 
 	call changedChunk
-	jnc render
+	cmp rax, 0
+	je render
 	; fall through to generateChunks
 
 regenChunks:
@@ -134,6 +138,8 @@ render:
 
 	call drawChunks
 
+	call drawChunkBorders
+
 	call drawPlayer
 
 	call EndMode2D
@@ -161,9 +167,9 @@ exit:
 drawPos:
 
 	sub rsp, 8
-	call getX
+	call getPlayerX
 	mov rsi, rax
-	call getY
+	call getPlayerY
 	mov rdx, rax
 	lea rdi, [posString]
 	xor rax, rax
@@ -183,7 +189,7 @@ section .data
 
 title db 'Hello world!', 0
 posString db 'Pos: %i, %i',0
-regeneratingChunksStr db 'Regenerating chunks!',0
+regeneratingChunksStr db 'Regenerating chunks!',0x0a,0
 
 screen:
   .width dq 800

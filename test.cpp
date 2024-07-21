@@ -17,6 +17,7 @@
 #include "raymath.h"
 #include <stdio.h>
 #include <OpenSimplexNoise.h>
+#include <perlinNoise.h>
 
 #define G 400
 #define PLAYER_JUMP_SPD 350.0f
@@ -56,6 +57,8 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera");
     
+    double noise2D = noise2(0, 0);
+
     double out = 1.0f;
     OpenSimplexNoise::Noise o1(100);
     int a = 1;
@@ -151,6 +154,8 @@ int main(void)
 
                 Rectangle playerRect = { player.position.x - 20, player.position.y - 40, 40.0f, 40.0f };
                 DrawRectangleRec(playerRect, RED);
+
+                DrawLine(0,1,2,3,RED);
                  
                 DrawCircleV(player.position, 5.0f, GOLD);
 

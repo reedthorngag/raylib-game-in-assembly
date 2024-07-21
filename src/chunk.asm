@@ -1,36 +1,49 @@
 extern DrawRectangle
+extern DrawLine
 
 extern _ZN16OpenSimplexNoise5NoiseC2El
 extern _ZNK16OpenSimplexNoise5Noise4evalEdd
+
+extern _Z6noise2ff
 
 extern printStr
 extern printHex
 extern printChar
 
-extern getX
-extern getY
+extern getPlayerX
+extern getPlayerY
 
+global chunksInit
 global generateChunks
 global drawChunks
+global drawChunkBorders
 
 section .text
+
+
+chunksInit:
+    mov rsi, 100
+    mov rdi, octave1
+    call _ZN16OpenSimplexNoise5NoiseC2El
+
+    mov rsi, 1000
+    mov rdi, octave2
+    call _ZN16OpenSimplexNoise5NoiseC2El
+    ret
 
 ; x in rax
 ; y in rbx
 generateChunks:
 
-    mov rsi, 0x100
-    mov rdi, noise_ptr
-    call _ZN16OpenSimplexNoise5NoiseC2El
-
-    call getY
+    call getPlayerY
     mov rbx, rax
-    call getX
+    call getPlayerX
 
     and rax, 0xfffffffffffffe00
     and rbx, 0xfffffffffffffe00
-    add rax, 0x200
-    add rbx, 0x200
+    add rax, [chunk.width]
+    add rax, [chunk.width]
+    add rbx, [chunk.height]
 
     mov rcx, [chunks.width]
 .iterateX:
@@ -40,12 +53,12 @@ generateChunks:
 .iterateY:
     dec rdx
     call generateChunk
-    sub rbx, 0x200
+    sub rbx, [chunk.height]
     cmp rdx, 0
     jne .iterateY
 
-    sub rax, 0x200
-    add rbx, 0x600
+    sub rax, [chunk.width]
+    add rbx, 0x600 ; chunk.width * chunks.width
     cmp rcx, 0
     jnz .iterateX
 
@@ -119,6 +132,7 @@ genTile:
     mov [rbp-8], rax
     mov [rbp-16], rbx
     mov qword [rbp-24], __float32__(0.001)
+    mov qword [rbp-32], __float32__(0.01)
 
     ; calculate tile position in chunk tile array
     shr rdx, 5
@@ -133,27 +147,50 @@ genTile:
 
     pxor xmm0,xmm0
     pxor xmm1,xmm1
-    cvtsi2sd xmm0, [rbp-8]
-    cvtsi2sd xmm1, [rbp-16]
+    cvtsi2ss xmm0, [rbp-8]
+    cvtsi2ss xmm1, [rbp-16]
 
-    pxor xmm2, xmm2
-    cvtss2sd xmm2, [rbp-24]
+    movss [rbp-8], xmm0
+    movss [rbp-16], xmm1
+
+    movss xmm2, [rbp-24]
+
+    mulss xmm0, xmm2
+    mulss xmm1, xmm2
+
+    call _Z6noise2ff
+    cvtss2sd xmm0, xmm0
+    ;mov rdi, octave1
+    ;call _ZNK16OpenSimplexNoise5Noise4evalEdd ; result in xmm0
+
+    movsd [rbp-24], xmm0
+
+    movss xmm0, [rbp-8]
+    movss xmm1, [rbp-16]
+
+    movss xmm2, [rbp-32]
+
+    mulss xmm0, xmm2
+    mulss xmm1, xmm2
+
+    call _Z6noise2ff
+    cvtss2sd xmm0, xmm0
+
+    movss xmm2, [rbp-32]
+    cvtss2sd xmm2, xmm2
 
     mulsd xmm0, xmm2
-    mulsd xmm1, xmm2
 
-    mov rdi, noise_ptr
-    call _ZNK16OpenSimplexNoise5Noise4evalEdd ; result in xmm0
+    movsd xmm1, [rbp-24]
+    addsd xmm0, xmm1
 
     pop rsi
-    mov byte [rsi], 0
 
-    mov qword [rbp-8], __float32__(0.2)
+    mov qword [rbp-8], __float32__(0.1)
     pxor xmm1,xmm1
     cvtss2sd xmm1, [rbp-8]
     subsd xmm0, xmm1
     movsd [rbp-8], xmm0
-
     mov rax, [rbp-8]
 
     shr rax, 63
@@ -192,12 +229,12 @@ drawChunks:
     cmp rcx, 0
     jne .iterateX
 
-    pop rbx
-    pop rcx
-    pop rdx
-    pop rax
-    pop rsi
     pop rdi
+    pop rsi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
 
     ret
 
@@ -261,7 +298,7 @@ drawTile:
     add rax, r8
 
     mov r12, rax ; true tile x pos
-    call getX
+    call getPlayerX
     sub r12, rax
 
     ; calculate true y pos
@@ -270,7 +307,7 @@ drawTile:
     add rax, r9
 
     mov r13, rax ; true tile y pos
-    call getY
+    call getPlayerY
     sub r13, rax
     
     ; calculate tile position in chunk tile array
@@ -297,8 +334,6 @@ drawTile:
     mov rcx, [tile.height]
     call DrawRectangle
 
-
-
 .return:
 
     pop rdi
@@ -310,9 +345,135 @@ drawTile:
 
     ret
 
+
+drawChunkBorders:
+    push rax
+    push rbx
+    push rcx
+    push rdx
+    push rsi
+    push rdi
+
+    mov rcx, [chunks.width]
+.iterateX:
+    dec rcx
+
+    mov rdx, [chunks.height]
+.iterateY:
+    dec rdx
+    call drawChunkBorder
+    cmp rdx, 0
+    jne .iterateY
+
+    cmp rcx, 0
+    jne .iterateX
+
+    pop rdi
+    pop rsi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
+    ret
+
+
+drawChunkBorder:
+
+    push rcx
+    push rdx
+
+    push rbp
+    mov rbp, rsp
+    sub rsp, 16
+
+    mov rax, rdx
+    mul qword [chunks.stepSizeY]
+    mov r8, rax
+
+    mov rax, rcx
+    mul qword [chunks.stepSizeX]
+
+    add rax, r8
+    add rax, chunks
+
+    mov rsi, rax
+
+    mov rax, [rsi] ; x
+    mov rbx, [rsi+8] ; y
+
+    mov [rbp-8], rax
+    mov [rbp-16], rbx
+
+    call getPlayerX
+    sub [rbp-8], rax
+    call getPlayerY
+    sub [rbp-16], rax
+
+    ; bottom
+    mov rdi, [rbp-8]
+    mov rsi, [rbp-16]
+
+    mov rdx, [rbp-8]
+    add rdx, [chunk.width] 
+    mov rcx, [rbp-16]
+
+    mov r8d, 0xff0000ff
+
+    call DrawLine
+
+
+    ; left
+    mov rdi, [rbp-8]
+    mov rsi, [rbp-16]
+
+    mov rdx, [rbp-8]
+    mov rcx, [rbp-16]
+    add rcx, [chunk.height]
+
+    mov r8d, 0xff0000ff
+
+    call DrawLine
+
+    ; right
+    mov rdi, [rbp-8]
+    add rdi, [chunk.width]
+    mov rsi, [rbp-16]
+
+    mov rdx, [rbp-8]
+    add rdx, [chunk.width] 
+    mov rcx, [rbp-16]
+    add rcx, [chunk.height]
+
+    mov r8d, 0xff0000ff
+
+    call DrawLine
+
+    ; top
+    mov rdi, [rbp-8]
+    mov rsi, [rbp-16]
+    add rsi, [chunk.height]
+
+    mov rdx, [rbp-8]
+    add rdx, [chunk.width] 
+    mov rcx, [rbp-16]
+    add rcx, [chunk.height]
+
+    mov r8d, 0xff0000ff
+
+    call DrawLine
+
+    add rsp, 16
+    pop rbp
+
+    pop rdx
+    pop rcx
+
+    ret
+
 section .data
 
-noise_ptr: dq 0
+octave1: dq 0
+octave2: dq 0
 
 text:
     .chunk db 0xa,"Drawing chunk at: ",0
@@ -323,7 +484,7 @@ chunks:
     .width dq 3
     .height dq 3
     .stepSizeX dq (8+8+(16*16))
-    .stepSizeY dq 0x330
+    .stepSizeY dq (8+8+(16*16)) * 3
 
 num_8 dq 8
 

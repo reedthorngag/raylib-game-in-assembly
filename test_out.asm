@@ -125,7 +125,7 @@ _Z12Vector2Scale7Vector2f:
 	.align 8
 .LC0:
 	.string	"raylib [core] example - 2d camera"
-.LC4:
+.LC5:
 	.string	"hello %lf"
 .LC17:
 	.string	"Follow player center"
@@ -169,7 +169,7 @@ main:
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
 	pushq	%rbx
-	subq	$1848, %rsp
+	subq	$1864, %rsp
 	.cfi_offset 3, -24
 	movl	$800, -28(%rbp)
 	movl	$450, -32(%rbp)
@@ -178,189 +178,194 @@ main:
 	movl	$450, %esi
 	movl	$800, %edi
 	call	InitWindow@PLT
-	movsd	.LC1(%rip), %xmm0
+	pxor	%xmm1, %xmm1
+	movl	.LC1(%rip), %eax
+	movd	%eax, %xmm0
+	call	_Z6noise2ff@PLT
+	cvtss2sd	%xmm0, %xmm0
 	movsd	%xmm0, -40(%rbp)
-	leaq	-1520(%rbp), %rax
+	movsd	.LC2(%rip), %xmm0
+	movsd	%xmm0, -48(%rbp)
+	leaq	-1536(%rbp), %rax
 	movl	$100, %esi
 	movq	%rax, %rdi
 	call	_ZN16OpenSimplexNoise5NoiseC1El@PLT
-	movl	$1, -44(%rbp)
+	movl	$1, -52(%rbp)
 	pxor	%xmm2, %xmm2
-	cvtsi2sdl	-44(%rbp), %xmm2
+	cvtsi2sdl	-52(%rbp), %xmm2
 	movq	%xmm2, %rdx
-	movsd	.LC2(%rip), %xmm0
-	leaq	-1520(%rbp), %rax
+	movsd	.LC3(%rip), %xmm0
+	leaq	-1536(%rbp), %rax
 	movapd	%xmm0, %xmm1
 	movq	%rdx, %xmm0
 	movq	%rax, %rdi
 	call	_ZNK16OpenSimplexNoise5Noise4evalEdd@PLT
 	movq	%xmm0, %rax
-	movq	%rax, -40(%rbp)
-	movsd	-40(%rbp), %xmm0
-	comisd	.LC3(%rip), %xmm0
+	movq	%rax, -48(%rbp)
+	movsd	-48(%rbp), %xmm0
+	comisd	.LC4(%rip), %xmm0
 	seta	%al
-	movb	%al, -45(%rbp)
-	movq	-40(%rbp), %rax
+	movb	%al, -53(%rbp)
+	movq	-48(%rbp), %rax
 	movq	%rax, %xmm0
-	leaq	.LC4(%rip), %rax
+	leaq	.LC5(%rip), %rax
 	movq	%rax, %rdi
 	movl	$1, %eax
 	call	printf@PLT
-	movq	$0, -1536(%rbp)
-	movq	$0, -1528(%rbp)
-	movss	.LC5(%rip), %xmm0
-	movss	%xmm0, -1536(%rbp)
+	movq	$0, -1552(%rbp)
+	movq	$0, -1544(%rbp)
 	movss	.LC6(%rip), %xmm0
-	movss	%xmm0, -1532(%rbp)
+	movss	%xmm0, -1552(%rbp)
+	movss	.LC7(%rip), %xmm0
+	movss	%xmm0, -1548(%rbp)
 	pxor	%xmm0, %xmm0
-	movss	%xmm0, -1528(%rbp)
-	movb	$0, -1524(%rbp)
+	movss	%xmm0, -1544(%rbp)
+	movb	$0, -1540(%rbp)
 	pxor	%xmm0, %xmm0
-	movss	%xmm0, -1664(%rbp)
+	movss	%xmm0, -1680(%rbp)
 	pxor	%xmm0, %xmm0
-	movss	%xmm0, -1660(%rbp)
+	movss	%xmm0, -1676(%rbp)
 	movss	.LC8(%rip), %xmm0
+	movss	%xmm0, -1672(%rbp)
+	movss	.LC6(%rip), %xmm0
+	movss	%xmm0, -1668(%rbp)
+	movl	$0, -1664(%rbp)
+	movb	$-56, -1660(%rbp)
+	movb	$-56, -1659(%rbp)
+	movb	$-56, -1658(%rbp)
+	movb	$-1, -1657(%rbp)
+	pxor	%xmm0, %xmm0
 	movss	%xmm0, -1656(%rbp)
-	movss	.LC5(%rip), %xmm0
+	movss	.LC6(%rip), %xmm0
 	movss	%xmm0, -1652(%rbp)
-	movl	$0, -1648(%rbp)
-	movb	$-56, -1644(%rbp)
-	movb	$-56, -1643(%rbp)
-	movb	$-56, -1642(%rbp)
-	movb	$-1, -1641(%rbp)
-	pxor	%xmm0, %xmm0
-	movss	%xmm0, -1640(%rbp)
-	movss	.LC5(%rip), %xmm0
-	movss	%xmm0, -1636(%rbp)
 	movss	.LC8(%rip), %xmm0
+	movss	%xmm0, -1648(%rbp)
+	movss	.LC9(%rip), %xmm0
+	movss	%xmm0, -1644(%rbp)
+	movl	$1, -1640(%rbp)
+	movb	$-126, -1636(%rbp)
+	movb	$-126, -1635(%rbp)
+	movb	$-126, -1634(%rbp)
+	movb	$-1, -1633(%rbp)
+	movss	.LC10(%rip), %xmm0
 	movss	%xmm0, -1632(%rbp)
 	movss	.LC9(%rip), %xmm0
 	movss	%xmm0, -1628(%rbp)
-	movl	$1, -1624(%rbp)
-	movb	$-126, -1620(%rbp)
-	movb	$-126, -1619(%rbp)
-	movb	$-126, -1618(%rbp)
-	movb	$-1, -1617(%rbp)
-	movss	.LC10(%rip), %xmm0
-	movss	%xmm0, -1616(%rbp)
-	movss	.LC9(%rip), %xmm0
-	movss	%xmm0, -1612(%rbp)
-	movss	.LC5(%rip), %xmm0
-	movss	%xmm0, -1608(%rbp)
+	movss	.LC6(%rip), %xmm0
+	movss	%xmm0, -1624(%rbp)
 	movss	.LC11(%rip), %xmm0
-	movss	%xmm0, -1604(%rbp)
-	movl	$1, -1600(%rbp)
-	movb	$-126, -1596(%rbp)
-	movb	$-126, -1595(%rbp)
-	movb	$-126, -1594(%rbp)
-	movb	$-1, -1593(%rbp)
+	movss	%xmm0, -1620(%rbp)
+	movl	$1, -1616(%rbp)
+	movb	$-126, -1612(%rbp)
+	movb	$-126, -1611(%rbp)
+	movb	$-126, -1610(%rbp)
+	movb	$-1, -1609(%rbp)
 	movss	.LC12(%rip), %xmm0
-	movss	%xmm0, -1592(%rbp)
+	movss	%xmm0, -1608(%rbp)
 	movss	.LC10(%rip), %xmm0
-	movss	%xmm0, -1588(%rbp)
+	movss	%xmm0, -1604(%rbp)
 	movss	.LC13(%rip), %xmm0
-	movss	%xmm0, -1584(%rbp)
+	movss	%xmm0, -1600(%rbp)
 	movss	.LC11(%rip), %xmm0
-	movss	%xmm0, -1580(%rbp)
-	movl	$1, -1576(%rbp)
-	movb	$-126, -1572(%rbp)
-	movb	$-126, -1571(%rbp)
-	movb	$-126, -1570(%rbp)
-	movb	$-1, -1569(%rbp)
+	movss	%xmm0, -1596(%rbp)
+	movl	$1, -1592(%rbp)
+	movb	$-126, -1588(%rbp)
+	movb	$-126, -1587(%rbp)
+	movb	$-126, -1586(%rbp)
+	movb	$-1, -1585(%rbp)
 	movss	.LC14(%rip), %xmm0
-	movss	%xmm0, -1568(%rbp)
+	movss	%xmm0, -1584(%rbp)
 	movss	.LC10(%rip), %xmm0
-	movss	%xmm0, -1564(%rbp)
+	movss	%xmm0, -1580(%rbp)
 	movss	.LC13(%rip), %xmm0
-	movss	%xmm0, -1560(%rbp)
+	movss	%xmm0, -1576(%rbp)
 	movss	.LC11(%rip), %xmm0
-	movss	%xmm0, -1556(%rbp)
-	movl	$1, -1552(%rbp)
-	movb	$-126, -1548(%rbp)
-	movb	$-126, -1547(%rbp)
-	movb	$-126, -1546(%rbp)
-	movb	$-1, -1545(%rbp)
-	movl	$5, -52(%rbp)
+	movss	%xmm0, -1572(%rbp)
+	movl	$1, -1568(%rbp)
+	movb	$-126, -1564(%rbp)
+	movb	$-126, -1563(%rbp)
+	movb	$-126, -1562(%rbp)
+	movb	$-1, -1561(%rbp)
+	movl	$5, -60(%rbp)
+	movq	$0, -1712(%rbp)
+	movq	$0, -1704(%rbp)
 	movq	$0, -1696(%rbp)
-	movq	$0, -1688(%rbp)
-	movq	$0, -1680(%rbp)
-	movq	-1536(%rbp), %rax
-	movq	%rax, -1688(%rbp)
-	movss	.LC5(%rip), %xmm0
-	movss	%xmm0, -1696(%rbp)
+	movq	-1552(%rbp), %rax
+	movq	%rax, -1704(%rbp)
+	movss	.LC6(%rip), %xmm0
+	movss	%xmm0, -1712(%rbp)
 	movss	.LC15(%rip), %xmm0
-	movss	%xmm0, -1692(%rbp)
+	movss	%xmm0, -1708(%rbp)
 	pxor	%xmm0, %xmm0
-	movss	%xmm0, -1680(%rbp)
+	movss	%xmm0, -1696(%rbp)
 	movss	.LC16(%rip), %xmm0
-	movss	%xmm0, -1676(%rbp)
+	movss	%xmm0, -1692(%rbp)
 	leaq	_Z18UpdateCameraCenterP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
-	movq	%rax, -1744(%rbp)
-	leaq	_Z27UpdateCameraCenterInsideMapP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
-	movq	%rax, -1736(%rbp)
-	leaq	_Z30UpdateCameraCenterSmoothFollowP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
-	movq	%rax, -1728(%rbp)
-	leaq	_Z28UpdateCameraEvenOutOnLandingP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
-	movq	%rax, -1720(%rbp)
-	leaq	_Z28UpdateCameraPlayerBoundsPushP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
-	movq	%rax, -1712(%rbp)
-	movl	$0, -20(%rbp)
-	movl	$5, -56(%rbp)
-	leaq	.LC17(%rip), %rax
-	movq	%rax, -1792(%rbp)
-	leaq	.LC18(%rip), %rax
-	movq	%rax, -1784(%rbp)
-	leaq	.LC19(%rip), %rax
-	movq	%rax, -1776(%rbp)
-	leaq	.LC20(%rip), %rax
-	movq	%rax, -1768(%rbp)
-	leaq	.LC21(%rip), %rax
 	movq	%rax, -1760(%rbp)
+	leaq	_Z27UpdateCameraCenterInsideMapP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
+	movq	%rax, -1752(%rbp)
+	leaq	_Z30UpdateCameraCenterSmoothFollowP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
+	movq	%rax, -1744(%rbp)
+	leaq	_Z28UpdateCameraEvenOutOnLandingP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
+	movq	%rax, -1736(%rbp)
+	leaq	_Z28UpdateCameraPlayerBoundsPushP8Camera2DP6PlayerP7EnvItemifii(%rip), %rax
+	movq	%rax, -1728(%rbp)
+	movl	$0, -20(%rbp)
+	movl	$5, -64(%rbp)
+	leaq	.LC17(%rip), %rax
+	movq	%rax, -1808(%rbp)
+	leaq	.LC18(%rip), %rax
+	movq	%rax, -1800(%rbp)
+	leaq	.LC19(%rip), %rax
+	movq	%rax, -1792(%rbp)
+	leaq	.LC20(%rip), %rax
+	movq	%rax, -1784(%rbp)
+	leaq	.LC21(%rip), %rax
+	movq	%rax, -1776(%rbp)
 	movl	$60, %edi
 	call	SetTargetFPS@PLT
 	jmp	.L10
 .L19:
 	call	GetFrameTime@PLT
 	movd	%xmm0, %eax
-	movl	%eax, -60(%rbp)
-	movl	-60(%rbp), %esi
-	movl	-52(%rbp), %edx
-	leaq	-1664(%rbp), %rcx
-	leaq	-1536(%rbp), %rax
-	movd	%esi, %xmm0
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
+	movl	%eax, -68(%rbp)
+	movl	-68(%rbp), %eax
+	movl	-60(%rbp), %edx
+	leaq	-1680(%rbp), %rsi
+	leaq	-1552(%rbp), %rcx
+	movd	%eax, %xmm0
+	movq	%rcx, %rdi
 	call	_Z12UpdatePlayerP6PlayerP7EnvItemif
 	call	GetMouseWheelMove@PLT
 	movss	.LC22(%rip), %xmm1
 	mulss	%xmm0, %xmm1
-	movss	-1676(%rbp), %xmm0
+	movss	-1692(%rbp), %xmm0
 	addss	%xmm1, %xmm0
-	movss	%xmm0, -1676(%rbp)
-	movss	-1676(%rbp), %xmm0
+	movss	%xmm0, -1692(%rbp)
+	movss	-1692(%rbp), %xmm0
 	comiss	.LC23(%rip), %xmm0
 	jbe	.L23
 	movss	.LC23(%rip), %xmm0
-	movss	%xmm0, -1676(%rbp)
+	movss	%xmm0, -1692(%rbp)
 	jmp	.L13
 .L23:
-	movss	-1676(%rbp), %xmm1
+	movss	-1692(%rbp), %xmm1
 	movss	.LC24(%rip), %xmm0
 	comiss	%xmm1, %xmm0
 	jbe	.L13
 	movss	.LC24(%rip), %xmm0
-	movss	%xmm0, -1676(%rbp)
+	movss	%xmm0, -1692(%rbp)
 .L13:
 	movl	$82, %edi
 	call	IsKeyPressed@PLT
 	testb	%al, %al
 	je	.L15
 	movss	.LC16(%rip), %xmm0
-	movss	%xmm0, -1676(%rbp)
-	movss	.LC5(%rip), %xmm0
-	movss	%xmm0, -1536(%rbp)
+	movss	%xmm0, -1692(%rbp)
 	movss	.LC6(%rip), %xmm0
-	movss	%xmm0, -1532(%rbp)
+	movss	%xmm0, -1552(%rbp)
+	movss	.LC7(%rip), %xmm0
+	movss	%xmm0, -1548(%rbp)
 .L15:
 	movl	$67, %edi
 	call	IsKeyPressed@PLT
@@ -369,25 +374,23 @@ main:
 	movl	-20(%rbp), %eax
 	addl	$1, %eax
 	cltd
-	idivl	-56(%rbp)
+	idivl	-64(%rbp)
 	movl	%edx, -20(%rbp)
 .L16:
 	movl	-20(%rbp), %eax
 	cltq
-	movq	-1744(%rbp,%rax,8), %r11
-	movl	-60(%rbp), %eax
-	movl	-52(%rbp), %edx
-	leaq	-1664(%rbp), %r10
-	leaq	-1536(%rbp), %rsi
-	leaq	-1696(%rbp), %rdi
+	movq	-1760(%rbp,%rax,8), %r10
+	movl	-68(%rbp), %eax
+	movl	-60(%rbp), %ecx
+	leaq	-1680(%rbp), %rdx
+	leaq	-1552(%rbp), %rsi
+	leaq	-1712(%rbp), %rdi
 	movl	$450, %r9d
 	movl	$800, %r8d
 	movd	%eax, %xmm0
-	movl	%edx, %ecx
-	movq	%r10, %rdx
-	call	*%r11
+	call	*%r10
 	call	BeginDrawing@PLT
-	movl	-1848(%rbp), %ecx
+	movl	-1868(%rbp), %ecx
 	movb	$-56, %cl
 	movl	$-56, %eax
 	movb	%al, %ch
@@ -395,12 +398,12 @@ main:
 	movl	%ecx, %eax
 	orl	$13107200, %eax
 	orl	$-16777216, %eax
-	movl	%eax, -1848(%rbp)
+	movl	%eax, -1868(%rbp)
 	movl	%eax, %edi
 	call	ClearBackground@PLT
-	movl	$100, -64(%rbp)
-	movl	$120, -68(%rbp)
-	movl	-1812(%rbp), %ecx
+	movl	$100, -72(%rbp)
+	movl	$120, -76(%rbp)
+	movl	-1828(%rbp), %ecx
 	movb	$-26, %cl
 	movl	$41, %eax
 	movb	%al, %ch
@@ -408,24 +411,24 @@ main:
 	movl	%ecx, %eax
 	orl	$3604480, %eax
 	orl	$-16777216, %eax
-	movl	%eax, -1812(%rbp)
-	movl	-68(%rbp), %edx
-	movl	-64(%rbp), %eax
+	movl	%eax, -1828(%rbp)
+	movl	-76(%rbp), %edx
+	movl	-72(%rbp), %eax
 	movl	%eax, %esi
 	leaq	.LC25(%rip), %rax
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	TextFormat@PLT
-	movl	-1812(%rbp), %r8d
+	movl	-1828(%rbp), %r8d
 	movl	$20, %ecx
 	movl	$80, %edx
 	movl	$200, %esi
 	movq	%rax, %rdi
 	call	DrawText@PLT
 	subq	$8, %rsp
-	pushq	-1680(%rbp)
-	pushq	-1688(%rbp)
 	pushq	-1696(%rbp)
+	pushq	-1704(%rbp)
+	pushq	-1712(%rbp)
 	call	BeginMode2D@PLT
 	addq	$32, %rsp
 	movl	$0, -24(%rbp)
@@ -439,7 +442,7 @@ main:
 	salq	$3, %rax
 	leaq	-16(%rax), %rax
 	addq	%rbp, %rax
-	leaq	-1628(%rax), %rcx
+	leaq	-1644(%rax), %rcx
 	movl	-24(%rbp), %eax
 	movslq	%eax, %rdx
 	movq	%rdx, %rax
@@ -448,7 +451,7 @@ main:
 	salq	$3, %rax
 	leaq	-16(%rax), %rax
 	addq	%rbp, %rax
-	subq	$1648, %rax
+	subq	$1664, %rax
 	movq	(%rax), %rdx
 	movq	8(%rax), %rax
 	movl	(%rcx), %edi
@@ -458,23 +461,23 @@ main:
 	addl	$1, -24(%rbp)
 .L17:
 	movl	-24(%rbp), %eax
-	cmpl	-52(%rbp), %eax
+	cmpl	-60(%rbp), %eax
 	jl	.L18
-	movq	$0, -1808(%rbp)
-	movq	$0, -1800(%rbp)
+	movq	$0, -1824(%rbp)
+	movq	$0, -1816(%rbp)
 	movss	.LC26(%rip), %xmm0
-	movss	%xmm0, -1800(%rbp)
+	movss	%xmm0, -1816(%rbp)
 	movss	.LC26(%rip), %xmm0
-	movss	%xmm0, -1796(%rbp)
-	movss	-1536(%rbp), %xmm0
+	movss	%xmm0, -1812(%rbp)
+	movss	-1552(%rbp), %xmm0
 	movss	.LC27(%rip), %xmm1
 	subss	%xmm1, %xmm0
-	movss	%xmm0, -1808(%rbp)
-	movss	-1532(%rbp), %xmm0
+	movss	%xmm0, -1824(%rbp)
+	movss	-1548(%rbp), %xmm0
 	movss	.LC26(%rip), %xmm1
 	subss	%xmm1, %xmm0
-	movss	%xmm0, -1804(%rbp)
-	movl	-1844(%rbp), %ecx
+	movss	%xmm0, -1820(%rbp)
+	movl	-1864(%rbp), %ecx
 	movb	$-26, %cl
 	movl	$41, %eax
 	movb	%al, %ch
@@ -483,36 +486,51 @@ main:
 	orl	$3604480, %eax
 	orl	$-16777216, %eax
 	movl	%eax, %ecx
-	movl	%ecx, -1844(%rbp)
-	movq	-1808(%rbp), %rax
-	movq	-1800(%rbp), %rdx
+	movl	%ecx, -1864(%rbp)
+	movq	-1824(%rbp), %rax
+	movq	-1816(%rbp), %rdx
 	movl	%ecx, %edi
 	movq	%rax, %xmm0
 	movq	%rdx, %xmm1
 	call	DrawRectangleRec@PLT
-	movl	-1840(%rbp), %edx
-	movb	$-1, %dl
-	movl	$-53, %eax
+	movl	-1860(%rbp), %edx
+	movb	$-26, %dl
+	movl	$41, %eax
 	movb	%al, %dh
 	andl	$-16711681, %edx
 	movl	%edx, %eax
+	orl	$3604480, %eax
 	orl	$-16777216, %eax
-	movl	%eax, %ecx
-	movl	%ecx, -1840(%rbp)
-	movq	-1536(%rbp), %rax
-	movl	%ecx, %edi
-	movss	.LC28(%rip), %xmm1
-	movq	%rax, %xmm0
-	call	DrawCircleV@PLT
-	call	EndMode2D@PLT
-	movl	-1836(%rbp), %ecx
-	movb	$0, %cl
-	movl	$0, %eax
+	movl	%eax, -1860(%rbp)
+	movl	%eax, %r8d
+	movl	$3, %ecx
+	movl	$2, %edx
+	movl	$1, %esi
+	movl	$0, %edi
+	call	DrawLine@PLT
+	movl	-1856(%rbp), %ecx
+	movb	$-1, %cl
+	movl	$-53, %eax
 	movb	%al, %ch
 	andl	$-16711681, %ecx
 	movl	%ecx, %eax
 	orl	$-16777216, %eax
-	movl	%eax, -1836(%rbp)
+	movl	%eax, %edx
+	movl	%edx, -1856(%rbp)
+	movq	-1552(%rbp), %rax
+	movl	%edx, %edi
+	movss	.LC28(%rip), %xmm1
+	movq	%rax, %xmm0
+	call	DrawCircleV@PLT
+	call	EndMode2D@PLT
+	movl	-1852(%rbp), %edx
+	movb	$0, %dl
+	movl	$0, %eax
+	movb	%al, %dh
+	andl	$-16711681, %edx
+	movl	%edx, %eax
+	orl	$-16777216, %eax
+	movl	%eax, -1852(%rbp)
 	movl	%eax, %r8d
 	movl	$10, %ecx
 	movl	$20, %edx
@@ -520,15 +538,15 @@ main:
 	leaq	.LC29(%rip), %rax
 	movq	%rax, %rdi
 	call	DrawText@PLT
-	movl	-1832(%rbp), %edx
-	movb	$80, %dl
+	movl	-1848(%rbp), %ecx
+	movb	$80, %cl
 	movl	$80, %eax
-	movb	%al, %dh
-	andl	$-16711681, %edx
-	movl	%edx, %eax
+	movb	%al, %ch
+	andl	$-16711681, %ecx
+	movl	%ecx, %eax
 	orl	$5242880, %eax
 	orl	$-16777216, %eax
-	movl	%eax, -1832(%rbp)
+	movl	%eax, -1848(%rbp)
 	movl	%eax, %r8d
 	movl	$10, %ecx
 	movl	$40, %edx
@@ -536,23 +554,7 @@ main:
 	leaq	.LC30(%rip), %rax
 	movq	%rax, %rdi
 	call	DrawText@PLT
-	movl	-1828(%rbp), %ecx
-	movb	$80, %cl
-	movl	$80, %eax
-	movb	%al, %ch
-	andl	$-16711681, %ecx
-	movl	%ecx, %eax
-	orl	$5242880, %eax
-	orl	$-16777216, %eax
-	movl	%eax, -1828(%rbp)
-	movl	%eax, %r8d
-	movl	$10, %ecx
-	movl	$60, %edx
-	movl	$40, %esi
-	leaq	.LC31(%rip), %rax
-	movq	%rax, %rdi
-	call	DrawText@PLT
-	movl	-1824(%rbp), %edx
+	movl	-1844(%rbp), %edx
 	movb	$80, %dl
 	movl	$80, %eax
 	movb	%al, %dh
@@ -560,15 +562,15 @@ main:
 	movl	%edx, %eax
 	orl	$5242880, %eax
 	orl	$-16777216, %eax
-	movl	%eax, -1824(%rbp)
+	movl	%eax, -1844(%rbp)
 	movl	%eax, %r8d
 	movl	$10, %ecx
-	movl	$80, %edx
+	movl	$60, %edx
 	movl	$40, %esi
-	leaq	.LC32(%rip), %rax
+	leaq	.LC31(%rip), %rax
 	movq	%rax, %rdi
 	call	DrawText@PLT
-	movl	-1820(%rbp), %ecx
+	movl	-1840(%rbp), %ecx
 	movb	$80, %cl
 	movl	$80, %eax
 	movb	%al, %ch
@@ -576,7 +578,23 @@ main:
 	movl	%ecx, %eax
 	orl	$5242880, %eax
 	orl	$-16777216, %eax
-	movl	%eax, -1820(%rbp)
+	movl	%eax, -1840(%rbp)
+	movl	%eax, %r8d
+	movl	$10, %ecx
+	movl	$80, %edx
+	movl	$40, %esi
+	leaq	.LC32(%rip), %rax
+	movq	%rax, %rdi
+	call	DrawText@PLT
+	movl	-1836(%rbp), %edx
+	movb	$80, %dl
+	movl	$80, %eax
+	movb	%al, %dh
+	andl	$-16711681, %edx
+	movl	%edx, %eax
+	orl	$5242880, %eax
+	orl	$-16777216, %eax
+	movl	%eax, -1836(%rbp)
 	movl	%eax, %r8d
 	movl	$10, %ecx
 	movl	$100, %edx
@@ -584,14 +602,14 @@ main:
 	leaq	.LC33(%rip), %rax
 	movq	%rax, %rdi
 	call	DrawText@PLT
-	movl	-1816(%rbp), %edx
-	movb	$0, %dl
+	movl	-1832(%rbp), %ecx
+	movb	$0, %cl
 	movl	$0, %eax
-	movb	%al, %dh
-	andl	$-16711681, %edx
-	movl	%edx, %eax
+	movb	%al, %ch
+	andl	$-16711681, %ecx
+	movl	%ecx, %eax
 	orl	$-16777216, %eax
-	movl	%eax, -1816(%rbp)
+	movl	%eax, -1832(%rbp)
 	movl	%eax, %r8d
 	movl	$10, %ecx
 	movl	$120, %edx
@@ -611,7 +629,7 @@ main:
 	movl	%eax, %ebx
 	movl	-20(%rbp), %eax
 	cltq
-	movq	-1792(%rbp,%rax,8), %rax
+	movq	-1808(%rbp,%rax,8), %rax
 	movl	%ebx, %r8d
 	movl	$10, %ecx
 	movl	$140, %edx
@@ -778,7 +796,7 @@ _Z12UpdatePlayerP6PlayerP7EnvItemif:
 	movq	-40(%rbp), %rax
 	movss	8(%rax), %xmm1
 	movss	-56(%rbp), %xmm2
-	movss	.LC5(%rip), %xmm0
+	movss	.LC6(%rip), %xmm0
 	mulss	%xmm2, %xmm0
 	addss	%xmm1, %xmm0
 	movq	-40(%rbp), %rax
@@ -1509,23 +1527,26 @@ _Z28UpdateCameraPlayerBoundsPushP8Camera2DP6PlayerP7EnvItemifii:
 .LFE1207:
 	.size	_Z28UpdateCameraPlayerBoundsPushP8Camera2DP6PlayerP7EnvItemifii, .-_Z28UpdateCameraPlayerBoundsPushP8Camera2DP6PlayerP7EnvItemifii
 	.section	.rodata
-	.align 8
+	.align 4
 .LC1:
+	.long	0
+	.align 8
+.LC2:
 	.long	0
 	.long	1072693248
 	.align 8
-.LC2:
+.LC3:
 	.long	858993459
 	.long	1075852083
 	.align 8
-.LC3:
+.LC4:
 	.long	0
 	.long	1071644672
 	.align 4
-.LC5:
+.LC6:
 	.long	1137180672
 	.align 4
-.LC6:
+.LC7:
 	.long	1133248512
 	.align 4
 .LC8:
