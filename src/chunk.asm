@@ -470,6 +470,49 @@ drawChunkBorder:
 
     ret
 
+
+; x in rax, y in rbx
+; returns tileType in rax
+getTile:
+    push rbx
+    push rcx
+    push rdx
+    push rsi
+
+    push rax
+    push rbx
+
+    shr rax, 5
+    shr rbx, 5
+    and rax, 0x3
+    and rbx, 0x3
+
+    mul qword [chunks.stepSizeY]
+    mov r8, rax
+
+    mov rax, rbx
+    mul qword [chunks.stepSizeX]
+
+    add rax, r8
+    add rax, chunks
+    mov rsi, rax
+
+    pop rbx
+    pop rax
+
+    add rsi, 16
+
+    xchg rax, rbx ; x in rbx, y in rax
+    mul [chunk.tilesX]
+    
+
+    pop rsi
+    pop rdx
+    pop rcx
+    pop rbx
+
+    ret
+
 section .data
 
 octave1: dq 0
