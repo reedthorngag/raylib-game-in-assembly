@@ -3,6 +3,8 @@ extern DrawRectangle
 extern printHex
 extern printChar
 
+extern tileWalkable
+
 global getPlayerX
 global getPlayerY
 global getScreenRelX
@@ -18,11 +20,11 @@ global changedChunk
 section .text
 
 getPlayerX:
-    mov rax, [player.x]
+    mov rax, [player.viewX]
     ret
 
 getPlayerY:
-    mov rax, [player.y]
+    mov rax, [player.viewY]
     ret
 
 getScreenRelX:
@@ -34,6 +36,17 @@ getScreenRelY:
     ret
 
 stepPosX:
+    mov rax, [player.x]
+    add rax, [player.speed]
+    mov rcx, rax
+    mov rbx, [player.y]
+    call tileWalkable
+    call printHex
+    cmp rax, 0
+    je .return
+
+    mov [player.x], rcx
+
     mov rax, [player.relX]
     add rax, [player.speed]
     cmp rax, [player.maxRelX]
@@ -43,10 +56,11 @@ stepPosX:
     mov rcx, [player.maxRelX]
     sub rax, rcx
     mov [player.relX], rcx
-    add [player.x], rax
+    add [player.viewX], rax
 
 .return:
     ret
+
 
 stepNegX:
     mov rax, [player.relX]
@@ -59,7 +73,7 @@ stepNegX:
     sub rcx, rax
     add rax, rcx
     mov [player.relX], rax
-    sub [player.x], rcx
+    sub [player.viewX], rcx
 
 .return:
     ret
@@ -74,7 +88,7 @@ stepPosY:
     mov rcx, [player.maxRelY]
     sub rax, rcx
     mov [player.relY], rcx
-    add [player.y], rax
+    add [player.viewY], rax
 
 .return:
     ret
@@ -90,7 +104,7 @@ stepNegY:
     sub rcx, rax
     add rax, rcx
     mov [player.relY], rax
-    sub [player.y], rcx
+    sub [player.viewY], rcx
 
 .return:
     ret
@@ -107,9 +121,9 @@ drawPlayer:
     ret
 
 changedChunk:
-    mov rax, [player.x]
+    mov rax, [player.viewX]
     shr rax, 9
-    mov rbx, [player.y]
+    mov rbx, [player.viewY]
     shr rbx, 9
 
     cmp rax, [player.lastChunkX]
@@ -137,18 +151,20 @@ changedChunk:
 section .data
 
 player:
-  .relX dq 395
-  .relY dq 220
-  .minRelX dq 100
-  .minRelY dq 80
-  .maxRelX dq 690
-  .maxRelY dq 360
-  .x dq 2000
-  .y dq 136
-  .lastChunkX dq 0
-  .lastChunkY dq 0
-  .speed dq 8
-  .width dq 20
-  .height dq 20
+    .x dq 0
+    .y dq 0
+    .relX dq 395
+    .relY dq 220
+    .minRelX dq 100
+    .minRelY dq 80
+    .maxRelX dq 690
+    .maxRelY dq 360
+    .viewX dq 2000
+    .viewY dq 136
+    .lastChunkX dq 0
+    .lastChunkY dq 0
+    .speed dq 8
+    .width dq 20
+    .height dq 20
 
 

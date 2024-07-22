@@ -17,6 +17,8 @@ global chunksInit
 global generateChunks
 global drawChunks
 global drawChunkBorders
+global getTileType
+global tileWalkable
 
 section .text
 
@@ -124,7 +126,7 @@ genTile:
 
     push rbp
     mov rbp, rsp
-    sub rsp, 32
+    sub rsp, 40
 
     add rax, rcx
     add rbx, rdx
@@ -133,6 +135,7 @@ genTile:
     mov [rbp-16], rbx
     mov qword [rbp-24], __float32__(0.001)
     mov qword [rbp-32], __float32__(0.01)
+    mov qword [rbp-40], __float32__(0.075)
 
     ; calculate tile position in chunk tile array
     shr rdx, 5
@@ -176,8 +179,8 @@ genTile:
     call _Z6noise2ff
     cvtss2sd xmm0, xmm0
 
-    movss xmm2, [rbp-32]
-    cvtss2sd xmm2, xmm2
+    pxor xmm2, xmm2
+    cvtss2sd xmm2, [rbp-40]
 
     mulsd xmm0, xmm2
 
@@ -196,7 +199,7 @@ genTile:
     shr rax, 63
     mov [rsi], al
 
-    add rsp, 32
+    add rsp, 40
     pop rbp
 
     pop rsi
@@ -473,7 +476,7 @@ drawChunkBorder:
 
 ; x in rax, y in rbx
 ; returns tileType in rax
-getTile:
+getTileType:
     push rbx
     push rcx
     push rdx
@@ -502,9 +505,29 @@ getTile:
 
     add rsi, 16
 
+    shr rax, 5
+    and rax, 0xf
+    shr rbx, 5
+    and rbx, 0xf
+
     xchg rax, rbx ; x in rbx, y in rax
-    mul [chunk.tilesX]
+    mul qword [chunk.tilesX]
     
+    add rax, rbx
+
+    ; we now have the byte offset of the tile in rax
+
+    add rsi, rax
+
+    movzx rax, byte [rsi]
+
+    ; each element in tileTypes is 8 bytes long
+    shl rax, 3
+
+    mov rsi, tileTypes
+    add rsi, rax
+
+    mov rax, [rsi]
 
     pop rsi
     pop rdx
@@ -512,6 +535,22 @@ getTile:
     pop rbx
 
     ret
+
+
+; x in rax, y in rbx, returns result in rax, 1 for true, 0 for false
+tileWalkable:
+
+    call getTileType
+
+    push rsi
+    add rax, 4
+    mov rsi, rax
+
+    movzx rax, byte [rsi]
+    pop rsi
+
+    ret
+
 
 section .data
 
