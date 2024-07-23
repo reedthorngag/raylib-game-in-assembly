@@ -5,8 +5,10 @@ extern printChar
 
 extern tileWalkable
 
-global getPlayerX
-global getPlayerY
+global getViewX
+global getViewY
+global getTrueX
+global getTyueY 
 global getScreenRelX
 global getScreenRelY
 
@@ -19,12 +21,22 @@ global changedChunk
 
 section .text
 
-getPlayerX:
+getViewX:
     mov rax, [player.viewX]
     ret
 
-getPlayerY:
+getViewY:
     mov rax, [player.viewY]
+    ret
+
+getTrueX:
+    mov rax, [player.viewX]
+    add rax, [player.relX]
+    ret
+
+getTrueY:
+    mov rax, [player.viewY]
+    add rax, [player.viewY]
     ret
 
 getScreenRelX:
@@ -36,16 +48,13 @@ getScreenRelY:
     ret
 
 stepPosX:
-    mov rax, [player.x]
-    add rax, [player.speed]
-    mov rcx, rax
-    mov rbx, [player.y]
+    call getTrueY
+    mov rbx, rax
+    call getTrueX
     call tileWalkable
     call printHex
     cmp rax, 0
     je .return
-
-    mov [player.x], rcx
 
     mov rax, [player.relX]
     add rax, [player.speed]
@@ -151,8 +160,6 @@ changedChunk:
 section .data
 
 player:
-    .x dq 0
-    .y dq 0
     .relX dq 395
     .relY dq 220
     .minRelX dq 100

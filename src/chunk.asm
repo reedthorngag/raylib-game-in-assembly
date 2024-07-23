@@ -10,8 +10,8 @@ extern printStr
 extern printHex
 extern printChar
 
-extern getPlayerX
-extern getPlayerY
+extern getViewX
+extern getViewY
 
 global chunksInit
 global generateChunks
@@ -37,9 +37,9 @@ chunksInit:
 ; y in rbx
 generateChunks:
 
-    call getPlayerY
+    call getViewY
     mov rbx, rax
-    call getPlayerX
+    call getViewX
 
     and rax, 0xfffffffffffffe00
     and rbx, 0xfffffffffffffe00
@@ -199,6 +199,8 @@ genTile:
     shr rax, 63
     mov [rsi], al
 
+    movzx rax, byte [rsi]
+
     add rsp, 40
     pop rbp
 
@@ -301,7 +303,7 @@ drawTile:
     add rax, r8
 
     mov r12, rax ; true tile x pos
-    call getPlayerX
+    call getViewX
     sub r12, rax
 
     ; calculate true y pos
@@ -310,7 +312,7 @@ drawTile:
     add rax, r9
 
     mov r13, rax ; true tile y pos
-    call getPlayerY
+    call getViewY
     sub r13, rax
     
     ; calculate tile position in chunk tile array
@@ -407,9 +409,9 @@ drawChunkBorder:
     mov [rbp-8], rax
     mov [rbp-16], rbx
 
-    call getPlayerX
+    call getViewX
     sub [rbp-8], rax
-    call getPlayerY
+    call getViewY
     sub [rbp-16], rax
 
     ; bottom
@@ -485,10 +487,25 @@ getTileType:
     push rax
     push rbx
 
-    shr rax, 5
-    shr rbx, 5
+    shr rax, 8
+    shr rbx, 8
     and rax, 0x3
     and rbx, 0x3
+
+    ; if both bits are set, clear them both (lock to the range 0-2 inclusive)
+    mov rcx, rax
+    shr rcx, 1
+    xor rcx, rax
+    and rcx, 1
+    shl rcx, 1
+    mov rax, rcx
+
+    mov rcx, rbx
+    shr rcx, 1
+    xor rcx, rbx
+    and rcx, 1
+    shl rcx, 1
+    mov rbx, rcx
 
     mul qword [chunks.stepSizeY]
     mov r8, rax
@@ -543,14 +560,14 @@ tileWalkable:
     call getTileType
 
     push rsi
+
     add rax, 4
     mov rsi, rax
 
     movzx rax, byte [rsi]
+
     pop rsi
-
     ret
-
 
 section .data
 

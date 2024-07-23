@@ -15,8 +15,8 @@ extern IsKeyDown
 extern TextFormat
 extern DrawText
 
-extern getPlayerX
-extern getPlayerY
+extern getViewX
+extern getViewY
 extern getScreenRelX
 extern getScreenRelY
 extern stepPosX
@@ -167,9 +167,9 @@ exit:
 drawPos:
 
 	sub rsp, 8
-	call getPlayerX
+	call getViewX
 	mov rsi, rax
-	call getPlayerY
+	call getViewY
 	mov rdx, rax
 	lea rdi, [posString]
 	xor rax, rax
